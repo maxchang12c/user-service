@@ -105,7 +105,7 @@ router.post('/update', async (request, response) => {
 app.use("/", router);
 
 startDatabase().then(async () => {
-    app.listen(3020, async () => {
-        console.log('listening on port 3020');
+    app.listen(3021, async () => {
+        console.log('listening on port 3021');
     });
 });
