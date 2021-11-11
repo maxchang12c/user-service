@@ -17,6 +17,14 @@ async function _findCustomer({ id }) {
     return await database.collection(collectionName).find({ id }).toArray();
 }
 
+async function _isDuplicate({ id }, database) {
+    let db = database;
+    if (!db)
+        db = await getDatabase();
+    const result = await database.collection(collectionName).find({ id }).toArray();
+    return !isUndefinedNullOrEmpty(result) && result.length > 0;
+}
+
 async function insertCustomer({ name,
     id,
     email,
@@ -30,6 +38,8 @@ async function insertCustomer({ name,
     }
     try {
         const database = await getDatabase();
+        const isDup = await _isDuplicate({ id }, database)
+        if (isDup) throw 'Duplicate records';
         const { insertedId } = await database.collection(collectionName).insertOne({
             name,
             id,
@@ -86,6 +96,9 @@ async function updateCustomer({ countryCode,
     significant }) {
     const records = await _findCustomer({ id: prevId })
     const database = await getDatabase();
+
+    const isDup = await _isDuplicate({ id }, database)
+    if (isDup) throw 'Duplicate records';
 
     if (!isUndefinedNullOrEmpty(records)) {
         const { _id: dbId } = records[0]

@@ -49,10 +49,16 @@ router.post('/add', async (request, response) => {
                 response.send({ ret: '99', msg: `id ${id}` })
             }
         }
-    } catch (err) {
-        response.send({ ret: '999', msg: `error ${err}` })
+    } catch (e) {
+        switch (e) {
+            case 'Duplicate records':
+                response.send({ ret: '3201', msg: 'Duplicate records' })
+                break;
+            default:
+                response.send({ ret: '999', msg: `error ${e}` })
+                break;
+        }
     }
-
 });
 
 router.post('/delete', async (request, response) => {
@@ -65,8 +71,8 @@ router.post('/delete', async (request, response) => {
                 response.send({ ret: '99', msg: `id ${msg}` })
             }
         }
-    } catch (err) {
-        response.send({ ret: '999', msg: `error ${err}` })
+    } catch (e) {
+        response.send({ ret: '999', msg: `error ${e}` })
     }
 
 });
@@ -81,8 +87,15 @@ router.post('/update', async (request, response) => {
                 response.send({ ret: '99', msg: `id ${msg}` })
             }
         }
-    } catch (err) {
-        response.send({ ret: '999', msg: `error ${err}` })
+    } catch (e) {
+        switch (e) {
+            case 'Duplicate records':
+                response.send({ ret: '3201', msg: 'Id exists' })
+                break;
+            default:
+                response.send({ ret: '999', msg: `error ${e}` })
+                break;
+        }
     }
 
 });
@@ -93,6 +106,6 @@ app.use("/", router);
 
 startDatabase().then(async () => {
     app.listen(3020, async () => {
-        console.log('listening on port 3001');
+        console.log('listening on port 3020');
     });
 });
