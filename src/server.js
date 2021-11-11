@@ -51,8 +51,11 @@ router.post('/add', async (request, response) => {
         }
     } catch (e) {
         switch (e) {
-            case 'Duplicate records':
-                response.send({ ret: '3201', msg: 'Duplicate records' })
+            case 'Duplicate records id':
+                response.send({ ret: '3201', msg: 'Duplicate records id' })
+                break;
+            case 'Duplicate records email':
+                response.send({ ret: '3202', msg: 'Duplicate records email' })
                 break;
             default:
                 response.send({ ret: '999', msg: `error ${e}` })
@@ -89,8 +92,11 @@ router.post('/update', async (request, response) => {
         }
     } catch (e) {
         switch (e) {
-            case 'Duplicate records':
-                response.send({ ret: '3201', msg: 'Id exists' })
+            case 'Duplicate records id':
+                response.send({ ret: '3201', msg: 'Duplicate records id' })
+                break;
+            case 'Duplicate records email':
+                response.send({ ret: '3202', msg: 'Duplicate records email' })
                 break;
             default:
                 response.send({ ret: '999', msg: `error ${e}` })

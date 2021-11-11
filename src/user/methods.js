@@ -17,12 +17,19 @@ async function _findCustomer({ id }) {
     return await database.collection(collectionName).find({ id }).toArray();
 }
 
-async function _isDuplicate({ id }, database) {
-    let db = database;
-    if (!db)
-        db = await getDatabase();
-    const result = await database.collection(collectionName).find({ id }).toArray();
-    return !isUndefinedNullOrEmpty(result) && result.length > 0;
+async function _isDuplicate(identifier, val, database) {
+    try {
+        let db = database;
+        if (!db)
+            db = await getDatabase();
+
+        if (!identifier) throw 'identifier not found'
+
+        const result = await database.collection(collectionName).find({ [identifier]: val }).toArray();
+        return !isUndefinedNullOrEmpty(result) && result.length > 0;
+    } catch (e) {
+        throw e
+    }
 }
 
 async function insertCustomer({ name,
@@ -38,8 +45,11 @@ async function insertCustomer({ name,
     }
     try {
         const database = await getDatabase();
-        const isDup = await _isDuplicate({ id }, database)
-        if (isDup) throw 'Duplicate records';
+        const isIdDup = await _isDuplicate('id', id, database)
+        if (isIdDup) throw 'Duplicate records id';
+        const isEmailDup = await _isDuplicate('email', email, database)
+        if (isEmailDup) throw 'Duplicate records email';
+        
         const { insertedId } = await database.collection(collectionName).insertOne({
             name,
             id,
@@ -90,6 +100,7 @@ async function updateCustomer({ countryCode,
     dob,
     email,
     prevId,
+    prevEmail,
     id,
     name,
     international,
@@ -98,8 +109,13 @@ async function updateCustomer({ countryCode,
     const database = await getDatabase();
 
     if (prevId !== id) {
-        const isDup = await _isDuplicate({ id }, database)
-        if (isDup) throw 'Duplicate records';
+        const isIdDup = await _isDuplicate('id', id, database)
+        if (isIdDup) throw 'Duplicate records id';
+    }
+
+    if (prevEmail !== email) {
+        const isEmailDup = await _isDuplicate('email', email, database)
+        if (isEmailDup) throw 'Duplicate records email';
     }
 
     if (!isUndefinedNullOrEmpty(records)) {
