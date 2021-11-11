@@ -97,8 +97,10 @@ async function updateCustomer({ countryCode,
     const records = await _findCustomer({ id: prevId })
     const database = await getDatabase();
 
-    const isDup = await _isDuplicate({ id }, database)
-    if (isDup) throw 'Duplicate records';
+    if (prevId !== id) {
+        const isDup = await _isDuplicate({ id }, database)
+        if (isDup) throw 'Duplicate records';
+    }
 
     if (!isUndefinedNullOrEmpty(records)) {
         const { _id: dbId } = records[0]
