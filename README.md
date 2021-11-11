@@ -6,9 +6,13 @@ install nvm
 
 use node version 12 and above
 
-nvm use 12 and above
+###commands
 
-check node version 
+nvm install 12
+
+nvm use 12
+
+###check node version 
 
 node -v
 
